@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>语法规则 - 荣耀语学习</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .syntax-container {
+      background: #fff;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      margin: 20px 0 40px;
+    }
+
+    .syntax-image {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .syntax-image img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .syntax-title {
+      text-align: center;
+      font-size: 28px;
+      color: #2563eb;
+      margin-bottom: 20px;
+    }
+
+    .syntax-desc {
+      text-align: center;
+      color: #666;
+      font-size: 16px;
+      line-height: 1.8;
+    }
+
+    .back-btn {
+      display: inline-block;
+      padding: 12px 28px;
+      background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 25px;
+      font-size: 15px;
+      transition: all 0.3s ease;
+      margin-top: 30px;
+    }
+
+    .back-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container">
+      <div class="nav-wrapper">
+        <div class="logo">荣耀语学习网站</div>
+        <nav class="nav-tabs">
+          <a href="index.html" class="nav-tab">字母</a>
+          <a href="syntax.html" class="nav-tab">语法</a>
+          <a href="words.html" class="nav-tab">单词</a>
+          <a href="phrases.html" class="nav-tab">常用语</a>
+          <a href="quiz.html" class="nav-tab">测试</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1 class="page-title">荣耀语语法规则</h1>
+
+
+
+    <div class="syntax-image">
+      <img src="img/25.png" alt="语法规则图">
+    </div>
+
+    <p class="syntax-desc">
+      以上为荣耀语基本语法规则对照表，<br>
+      包含词性、时态、句型结构等核心语法知识。<br>
+      请结合字母和单词学习使用。
+    </p>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>荣耀语学习系统 - Written by <a href="https://taoi.me" target="_blank" style="color: #2563eb; text-decoration: none;">小夏不菜吖</a></p>
+    </div>
+  </footer>
+
+  <script>
+    function showMessage(el) {
+      el.style.opacity = '0.6';
+      setTimeout(() => {
+        alert('该模块正在开发中，敬请期待！');
+        el.style.opacity = '1';
+      }, 100);
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>单词学习 - 荣耀语学习</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .search-box {
+      text-align: center;
+      margin: 20px 0 30px;
+    }
+
+    .search-input {
+      width: 100%;
+      max-width: 400px;
+      padding: 14px 20px;
+      font-size: 16px;
+      border: 2px solid #e0e7ff;
+      border-radius: 30px;
+      outline: none;
+      transition: all 0.3s;
+    }
+
+    .search-input:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+    }
+
+    .word-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .word-card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 18px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+      transition: all 0.3s ease;
+    }
+
+    .word-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.15);
+    }
+
+    .word-info {
+      min-width: 120px;
+    }
+
+    .word-chinese {
+      font-size: 18px;
+      color: #1e40af;
+      font-weight: 600;
+    }
+
+    .word-type {
+      font-size: 12px;
+      color: #888;
+      margin-top: 2px;
+    }
+
+    .word-letters {
+      display: flex;
+      gap: 4px;
+      flex: 1;
+    }
+
+    .word-letters img {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+    }
+
+    .word-count {
+      background: #f0f4ff;
+      color: #2563eb;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+
+    .no-result {
+      text-align: center;
+      padding: 40px;
+      color: #888;
+      font-size: 16px;
+    }
+
+    .category-title {
+      font-size: 14px;
+      color: #666;
+      margin: 30px 0 15px;
+      padding-left: 5px;
+      border-left: 3px solid #2563eb;
+    }
+
+    @media (max-width: 480px) {
+      .search-box {
+        margin: 15px 0 20px;
+      }
+
+      .search-input {
+        padding: 12px 16px;
+        font-size: 14px;
+      }
+
+      .word-list {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .word-card {
+        padding: 14px;
+        gap: 12px;
+      }
+
+      .word-info {
+        min-width: 80px;
+      }
+
+      .word-chinese {
+        font-size: 16px;
+      }
+
+      .word-letters img {
+        width: 28px;
+        height: 28px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container">
+      <div class="nav-wrapper">
+        <div class="logo">荣耀语学习网站</div>
+        <nav class="nav-tabs">
+          <a href="index.html" class="nav-tab">字母</a>
+          <a href="syntax.html" class="nav-tab">语法</a>
+          <a href="words.html" class="nav-tab active">单词</a>
+          <a href="phrases.html" class="nav-tab">常用语</a>
+          <a href="quiz.html" class="nav-tab">测试</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1 class="page-title">荣耀语单词表</h1>
+
+    <div class="search-box">
+      <input type="text" class="search-input" id="searchInput" placeholder="搜索单词...">
+    </div>
+
+    <div class="word-list" id="wordList"></div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>荣耀语学习系统 - Written by <a href="https://taoi.me" target="_blank" style="color: #2563eb; text-decoration: none;">小夏不菜吖</a></p>
+    </div>
+  </footer>
+
+  <script>
+    const words = [
+      // 常用词
+      { chinese: "我", letters: ["2"], type: "代词" },
+      { chinese: "你", letters: ["4"], type: "代词" },
+      { chinese: "他", letters: ["20"], type: "代词" },
+      { chinese: "她", letters: ["14"], type: "代词" },
+      { chinese: "哪", letters: ["9"], type: "疑问词" },
+      { chinese: "不/否定", letters: ["5", "13"], type: "副词" },
+
+      // 日常活动
+      { chinese: "吃", letters: ["1", "3"], type: "动词" },
+      { chinese: "饭", letters: ["3", "5"], type: "名词" },
+      { chinese: "音乐", letters: ["1", "4", "5"], type: "名词" },
+      { chinese: "睡", letters: ["5", "5", "4"], type: "动词" },
+      { chinese: "穿(v.)/衣服(n.)", letters: ["6", "13"], type: "动/名词" },
+      { chinese: "出去/外面", letters: ["9", "11"], type: "副词" },
+
+      // 家庭称呼
+      { chinese: "妈", letters: ["8", "14"], type: "名词" },
+      { chinese: "爸", letters: ["8", "20"], type: "名词" },
+
+      // 身体部位
+      { chinese: "脑", letters: ["5", "10"], type: "名词" },
+      { chinese: "脸", letters: ["5", "13"], type: "名词" },
+      { chinese: "眼", letters: ["5", "6"], type: "名词" },
+      { chinese: "鼻", letters: ["5", "11"], type: "名词" },
+      { chinese: "耳", letters: ["5", "19"], type: "名词" },
+      { chinese: "嘴", letters: ["5", "3"], type: "名词" },
+      { chinese: "身体", letters: ["5"], type: "名词" },
+      { chinese: "上肢", letters: ["5", "16"], type: "名词" },
+      { chinese: "下肢", letters: ["5", "15"], type: "名词" },
+
+      // 情感
+      { chinese: "爱", letters: ["12", "5", "13"], type: "动词/名词" },
+      { chinese: "恨", letters: ["12", "13"], type: "动词" },
+
+      // 社会
+      { chinese: "同性恋(gay)", letters: ["20", "20"], type: "名词" },
+      { chinese: "同性恋(lala)", letters: ["14", "14"], type: "名词" },
+
+      // 其他
+      { chinese: "法", letters: ["12"], type: "名词" },
+      { chinese: "冰淇淋", letters: ["10", "14", "6"], type: "名词" },
+      { chinese: "药片/医生/医", letters: ["21"], type: "名词" },
+      { chinese: "烟/雾", letters: ["22"], type: "名词" },
+      { chinese: "地狱/地下/下面", letters: ["23"], type: "名词" },
+      { chinese: "货币/钱/资产", letters: ["24"], type: "名词" },
+    ];
+
+    function renderWords(filter = '') {
+      const list = document.getElementById('wordList');
+      const filtered = words.filter(w =>
+        w.chinese.includes(filter) || w.type.includes(filter)
+      );
+
+      if (filtered.length === 0) {
+        list.innerHTML = '<div class="no-result">未找到匹配的单词</div>';
+        return;
+      }
+
+      list.innerHTML = filtered.map(word => `
+        <div class="word-card">
+          <div class="word-info">
+            <div class="word-chinese">${word.chinese}</div>
+            <div class="word-type">${word.type}</div>
+          </div>
+          <div class="word-letters">
+            ${word.letters.map(n => `<img src="img/${n}.png" alt="字母">`).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      renderWords(e.target.value);
+    });
+
+    function showMessage(el) {
+      el.style.opacity = '0.6';
+      setTimeout(() => {
+        alert('该模块正在开发中，敬请期待！');
+        el.style.opacity = '1';
+      }, 100);
+    }
+
+    renderWords();
+  </script>
+</body>
+
+</html>

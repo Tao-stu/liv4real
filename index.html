@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>荣耀语学习网站</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="logo">荣耀语学习网站</div>
+                <nav class="nav-tabs">
+                    <a href="index.html" class="nav-tab active">字母</a>
+                    <a href="syntax.html" class="nav-tab">语法</a>
+                    <a href="words.html" class="nav-tab">单词</a>
+                    <a href="phrases.html" class="nav-tab">常用语</a>
+                    <a href="quiz.html" class="nav-tab">测试</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <h1 class="page-title">荣耀语字母表</h1>
+
+        <div class="letter-grid" id="letterGrid">
+            <!-- 字母卡片将通过JS动态生成 -->
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>荣耀语学习系统 - Written by <a href="https://taoi.me" target="_blank" style="color: #2563eb; text-decoration: none;">小夏不菜吖</a></p>
+        </div>
+    </footer>
+
+    <!-- 字母详情弹窗 -->
+    <div class="modal" id="letterModal">
+        <div class="modal-content">
+            <!-- 内容通过JS动态生成 -->
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+        function showMessage(el) {
+            el.style.opacity = '0.6';
+            setTimeout(() => {
+                alert('该模块正在开发中，敬请期待！');
+                el.style.opacity = '1';
+            }, 100);
+        }
+    </script>
+</body>
+
+</html>

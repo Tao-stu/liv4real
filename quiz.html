@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>测试 - 荣耀语学习</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .quiz-container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px 0 40px;
+    }
+
+    .quiz-progress {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      font-size: 16px;
+      color: #666;
+    }
+
+    .quiz-score {
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+      color: #fff;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+
+    .quiz-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      text-align: center;
+    }
+
+    .quiz-type {
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 10px;
+    }
+
+    .quiz-question {
+      font-size: 24px;
+      color: #1e40af;
+      font-weight: 600;
+      margin-bottom: 25px;
+      min-height: 36px;
+    }
+
+    .quiz-letters {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .quiz-letters img {
+      width: 50px;
+      height: 50px;
+      object-fit: contain;
+    }
+
+    .img-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .img-options .quiz-option {
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      padding: 10px;
+      background: #f0f4ff;
+      border: 2px solid #e0e7ff;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .img-options .quiz-option:hover:not(.disabled) {
+      border-color: #3b82f6;
+      background: #e0e7ff;
+    }
+
+    .img-options .quiz-option img {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+    }
+
+    .quiz-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .quiz-option {
+      padding: 15px 20px;
+      background: #f0f4ff;
+      border: 2px solid #e0e7ff;
+      border-radius: 12px;
+      font-size: 18px;
+      color: #333;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .quiz-option:hover:not(.disabled) {
+      background: #e0e7ff;
+      border-color: #3b82f6;
+    }
+
+    .quiz-option.correct {
+      background: #dcfce7;
+      border-color: #22c55e;
+      color: #16a34a;
+    }
+
+    .quiz-option.wrong {
+      background: #fee2e2;
+      border-color: #ef4444;
+      color: #dc2626;
+    }
+
+    .quiz-option.disabled {
+      cursor: default;
+    }
+
+    .quiz-feedback {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 600;
+      display: none;
+    }
+
+    .quiz-feedback.show {
+      display: block;
+    }
+
+    .quiz-feedback.correct {
+      background: #fff;
+      border: 2px solid #22c55e;
+      color: #16a34a;
+    }
+
+    .quiz-feedback.wrong {
+      background: #fff;
+      border: 2px solid #ef4444;
+      color: #dc2626;
+    }
+
+    .quiz-next {
+      margin-top: 20px;
+      padding: 12px 30px;
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+      color: #fff;
+      border: none;
+      border-radius: 25px;
+      font-size: 16px;
+      cursor: pointer;
+      display: none;
+    }
+
+    .quiz-next.show {
+      display: inline-block;
+    }
+
+    /* 结果页 */
+    .result-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      text-align: center;
+    }
+
+    .result-icon {
+      font-size: 80px;
+      margin-bottom: 20px;
+    }
+
+    .result-title {
+      font-size: 28px;
+      color: #1e40af;
+      margin-bottom: 10px;
+    }
+
+    .result-score {
+      font-size: 48px;
+      font-weight: bold;
+      color: #2563eb;
+      margin: 20px 0;
+    }
+
+    .result-detail {
+      color: #666;
+      font-size: 16px;
+      margin-bottom: 30px;
+    }
+
+    .result-restart {
+      padding: 14px 40px;
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+      color: #fff;
+      border: none;
+      border-radius: 25px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .result-restart:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
+    }
+
+    /* 手机端适配 */
+    @media (max-width: 480px) {
+      .quiz-container {
+        padding: 15px 0 30px;
+      }
+
+      .quiz-progress {
+        font-size: 14px;
+      }
+
+      .quiz-score {
+        padding: 4px 12px;
+        font-size: 14px;
+      }
+
+      .quiz-card {
+        padding: 20px 15px;
+        border-radius: 16px;
+      }
+
+      .quiz-type {
+        font-size: 12px;
+      }
+
+      .quiz-question {
+        font-size: 20px;
+        margin-bottom: 15px;
+      }
+
+      .quiz-letters {
+        gap: 4px;
+        flex-wrap: wrap;
+      }
+
+      .quiz-letters img {
+        width: 36px;
+        height: 36px;
+      }
+
+      .quiz-options {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-top: 15px;
+      }
+
+      .quiz-option {
+        padding: 12px 10px;
+        font-size: 15px;
+        border-radius: 10px;
+      }
+
+      .img-options {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .img-options .quiz-option {
+        padding: 8px;
+      }
+
+      .img-options .quiz-option img {
+        width: 28px;
+        height: 28px;
+      }
+
+      .quiz-feedback {
+        font-size: 15px;
+        padding: 12px;
+        margin-top: 15px;
+      }
+
+      .quiz-feedback img {
+        width: 30px;
+        height: 30px;
+      }
+
+      .quiz-next {
+        padding: 10px 25px;
+        font-size: 14px;
+      }
+
+      .result-card {
+        padding: 30px 20px;
+        border-radius: 16px;
+      }
+
+      .result-icon {
+        font-size: 60px;
+      }
+
+      .result-title {
+        font-size: 22px;
+      }
+
+      .result-score {
+        font-size: 36px;
+      }
+
+      .result-detail {
+        font-size: 14px;
+      }
+
+      .result-restart {
+        padding: 12px 30px;
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container">
+      <div class="nav-wrapper">
+        <div class="logo">荣耀语学习网站</div>
+        <nav class="nav-tabs">
+          <a href="index.html" class="nav-tab">字母</a>
+          <a href="syntax.html" class="nav-tab">语法</a>
+          <a href="words.html" class="nav-tab">单词</a>
+          <a href="phrases.html" class="nav-tab">常用语</a>
+          <a href="quiz.html" class="nav-tab active">测试</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1 class="page-title">荣耀语小测试</h1>
+
+    <div class="quiz-container" id="quizContainer"></div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>荣耀语学习系统 - Written by <a href="https://taoi.me" target="_blank" style="color: #2563eb; text-decoration: none;">小夏不菜吖</a></p>
+    </div>
+  </footer>
+
+  <script>
+    // 题目数据
+    const allQuestions = [
+      // 单词
+      { type: "单词", question: "我", answer: "我", letters: ["2"] },
+      { type: "单词", question: "你", answer: "你", letters: ["4"] },
+      { type: "单词", question: "他", answer: "他", letters: ["20"] },
+      { type: "单词", question: "她", answer: "她", letters: ["14"] },
+      { type: "单词", question: "吃", answer: "吃", letters: ["1", "3"] },
+      { type: "单词", question: "饭", answer: "饭", letters: ["3", "5"] },
+      { type: "单词", question: "音乐", answer: "音乐", letters: ["1", "4", "5"] },
+      { type: "单词", question: "睡", answer: "睡", letters: ["5", "5", "4"] },
+      { type: "单词", question: "妈", answer: "妈", letters: ["8", "14"] },
+      { type: "单词", question: "爸", answer: "爸", letters: ["8", "20"] },
+      { type: "单词", question: "眼", answer: "眼", letters: ["5", "6"] },
+      { type: "单词", question: "鼻", answer: "鼻", letters: ["5", "11"] },
+      { type: "单词", question: "耳", answer: "耳", letters: ["5", "19"] },
+      { type: "单词", question: "嘴", answer: "嘴", letters: ["5", "3"] },
+      { type: "单词", question: "身体", answer: "身体", letters: ["5"] },
+      { type: "单词", question: "爱", answer: "爱", letters: ["12", "5", "13"] },
+      { type: "单词", question: "不/否定", answer: "不/否定", letters: ["5", "13"] },
+      { type: "单词", question: "冰淇淋", answer: "冰淇淋", letters: ["10", "14", "6"] },
+      { type: "单词", question: "货币/钱/资产", answer: "货币/钱/资产", letters: ["24"] },
+      // 常用语
+      { type: "常用语", question: "我吃饭", answer: "我吃饭", letters: ["2", "1", "3", "3", "5"] },
+      { type: "常用语", question: "谁?", answer: "谁?", letters: ["20", "14"] },
+      { type: "常用语", question: "早上好", answer: "早上好", letters: ["15", "15", "20"] },
+      { type: "常用语", question: "中午好", answer: "中午好", letters: ["15", "19", "20"] },
+      { type: "常用语", question: "晚上好", answer: "晚上好", letters: ["19", "19", "20"] },
+      { type: "常用语", question: "不许od", answer: "不许od", letters: ["5", "13", "18", "21"] },
+      { type: "常用语", question: "别抽烟", answer: "别抽烟", letters: ["5", "13", "5", "3", "22"] },
+    ];
+
+    let questions = [];
+    let currentIndex = 0;
+    let score = 0;
+    let isReverse = Math.random() > 0.5; // 随机正反方向
+
+    // 打乱数组
+    function shuffle(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    // 生成选项
+    function getOptions(correct) {
+      const others = allQuestions.filter(q => q.answer !== correct).map(q => q.answer);
+      const wrongOptions = shuffle(others).slice(0, 3);
+      return shuffle([correct, ...wrongOptions]);
+    }
+
+    // 渲染题目
+    function renderQuestion() {
+      const container = document.getElementById('quizContainer');
+      const q = questions[currentIndex];
+
+      // 50%概率正反方向
+      isReverse = Math.random() > 0.5;
+
+      if (isReverse) {
+        // 给荣耀语选中文 - 显示图片，选项是中文
+        container.innerHTML = `
+          <div class="quiz-progress">
+            <span>第 ${currentIndex + 1} / ${questions.length} 题</span>
+            <span class="quiz-score">${score} 分</span>
+          </div>
+          <div class="quiz-card">
+            <div class="quiz-type">${q.type} · 看图选中文</div>
+            <div class="quiz-letters">
+              ${q.letters.map(n => `<img src="img/${n}.png" alt="字母">`).join('')}
+            </div>
+            <div class="quiz-question">?</div>
+            <div class="quiz-options">
+              ${getOptions(q.answer).map(opt => `
+                <button class="quiz-option" data-answer="${opt}">${opt}</button>
+              `).join('')}
+            </div>
+            <div class="quiz-feedback"></div>
+            <button class="quiz-next">下一题 →</button>
+          </div>
+        `;
+      } else {
+        // 给中文选荣耀语 - 显示中文，选项是图片
+        container.innerHTML = `
+          <div class="quiz-progress">
+            <span>第 ${currentIndex + 1} / ${questions.length} 题</span>
+            <span class="quiz-score">${score} 分</span>
+          </div>
+          <div class="quiz-card">
+            <div class="quiz-type">${q.type} · 看中文选图片</div>
+            <div class="quiz-question">${q.answer}</div>
+            <div class="quiz-options img-options">
+              ${getOptions(q.answer).map(opt => {
+          const item = allQuestions.find(a => a.answer === opt);
+          return `<button class="quiz-option" data-answer="${opt}">
+                  ${item.letters.map(n => `<img src="img/${n}.png" alt="字母">`).join('')}
+                </button>`;
+        }).join('')}
+            </div>
+            <div class="quiz-feedback"></div>
+            <button class="quiz-next">下一题 →</button>
+          </div>
+        `;
+      }
+
+      // 绑定按钮事件
+      document.querySelectorAll('.quiz-option').forEach(btn => {
+        btn.addEventListener('click', () => checkAnswer(btn));
+      });
+
+      document.querySelector('.quiz-next').addEventListener('click', nextQuestion);
+    }
+
+    // 检查答案
+    function checkAnswer(btn) {
+      const options = document.querySelectorAll('.quiz-option');
+      const feedback = document.querySelector('.quiz-feedback');
+      const correct = questions[currentIndex].answer;
+      const correctItem = questions[currentIndex];
+      const selected = btn.dataset.answer;
+
+      options.forEach(opt => opt.classList.add('disabled'));
+
+      // 生成荣耀语图片HTML
+      const gloryImg = correctItem.letters.map(n => `<img src="img/${n}.png" alt="字母">`).join('');
+
+      if (selected === correct) {
+        btn.classList.add('correct');
+        feedback.innerHTML = `✓ 回答正确！+10分<br>${gloryImg}`;
+        feedback.className = 'quiz-feedback show correct';
+        score += 10;
+        document.querySelector('.quiz-score').textContent = score + ' 分';
+      } else {
+        btn.classList.add('wrong');
+        options.forEach(opt => {
+          if (opt.dataset.answer === correct) opt.classList.add('correct');
+        });
+        feedback.innerHTML = `✗ 回答错误，正确答案是：<br>${gloryImg}`;
+        feedback.className = 'quiz-feedback show wrong';
+      }
+
+      document.querySelector('.quiz-next').classList.add('show');
+    }
+
+    // 下一题
+    function nextQuestion() {
+      currentIndex++;
+      if (currentIndex >= questions.length) {
+        showResult();
+      } else {
+        renderQuestion();
+      }
+    }
+
+    // 显示结果
+    function showResult() {
+      const container = document.getElementById('quizContainer');
+      let emoji, title;
+
+      if (score >= 90) {
+        emoji = '🌟';
+        title = '太棒了！';
+      } else if (score >= 70) {
+        emoji = '👍';
+        title = '还不错！';
+      } else if (score >= 50) {
+        emoji = '💪';
+        title = '继续加油！';
+      } else {
+        emoji = '📚';
+        title = '多复习一下吧';
+      }
+
+      container.innerHTML = `
+        <div class="result-card">
+          <div class="result-icon">${emoji}</div>
+          <div class="result-title">${title}</div>
+          <div class="result-score">${score} 分</div>
+          <div class="result-detail">答对 ${score / 10} / ${questions.length} 题</div>
+          <button class="result-restart" onclick="startQuiz()">再测一次</button>
+        </div>
+      `;
+    }
+
+    // 开始测试
+    function startQuiz() {
+      questions = shuffle(allQuestions).slice(0, 10);
+      currentIndex = 0;
+      score = 0;
+      renderQuestion();
+    }
+
+    startQuiz();
+  </script>
+</body>
+
+</html>

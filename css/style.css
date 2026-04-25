@@ -1,0 +1,337 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+  min-height: 100vh;
+  color: #333;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* 头部导航 */
+header {
+  background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+  padding: 20px 0;
+  box-shadow: 0 4px 20px rgba(37, 99, 235, 0.3);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+header .container {
+  padding: 0 20px;
+}
+
+.nav-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.logo {
+  font-size: 28px;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+.nav-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.nav-tab {
+  padding: 10px 20px;
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  text-decoration: none;
+  border-radius: 25px;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.nav-tab:hover,
+.nav-tab.active {
+  background: #fff;
+  color: #2563eb;
+  border-color: #fff;
+}
+
+/* 页面标题 */
+.page-title {
+  text-align: center;
+  font-size: 32px;
+  color: #2563eb;
+  margin: 30px 0;
+  position: relative;
+}
+
+.page-title::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, #2563eb, #3b82f6);
+  border-radius: 2px;
+}
+
+/* 字母网格 */
+.letter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 20px;
+  padding: 20px 0;
+}
+
+.letter-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 15px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.letter-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.2);
+  border-color: #3b82f6;
+}
+
+.letter-card img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin-bottom: 10px;
+}
+
+.letter-card .letter-num {
+  font-size: 14px;
+  color: #666;
+  background: #f0f4ff;
+  padding: 4px 12px;
+  border-radius: 12px;
+  display: inline-block;
+}
+
+/* 字母详情弹窗 */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(5px);
+}
+
+.modal.show {
+  display: flex;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 24px;
+  padding: 40px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  position: relative;
+  animation: modalIn 0.3s ease;
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.modal-close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 28px;
+  color: #999;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.modal-close:hover {
+  color: #2563eb;
+}
+
+.modal-content img {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+  margin-bottom: 20px;
+}
+
+.modal-content h3 {
+  font-size: 24px;
+  color: #2563eb;
+  margin-bottom: 10px;
+}
+
+.modal-content p {
+  color: #666;
+  font-size: 16px;
+}
+
+/* 页脚 */
+footer {
+  text-align: center;
+  padding: 30px 0;
+  color: #888;
+  font-size: 14px;
+}
+
+/* 响应式 */
+@media (max-width: 600px) {
+  .container {
+    padding: 15px;
+  }
+
+  .page-title {
+    font-size: 24px;
+  }
+
+  .letter-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 12px;
+  }
+
+  .letter-card img {
+    width: 60px;
+    height: 60px;
+  }
+
+  .nav-tab {
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+
+  .logo {
+    font-size: 22px;
+  }
+}
+
+/* 手机端适配 */
+@media (max-width: 480px) {
+  header {
+    padding: 12px 0;
+  }
+
+  .nav-wrapper {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .logo {
+    font-size: 20px;
+  }
+
+  .nav-tabs {
+    gap: 4px;
+  }
+
+  .nav-tab {
+    padding: 6px 10px;
+    font-size: 12px;
+    border-radius: 15px;
+  }
+
+  .page-title {
+    font-size: 22px;
+  }
+
+  .letter-grid {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 10px;
+  }
+
+  .letter-card {
+    padding: 10px;
+  }
+
+  .letter-card img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .letter-card .letter-num {
+    font-size: 11px;
+    padding: 2px 8px;
+  }
+
+  .word-list {
+    grid-template-columns: 1fr;
+  }
+
+  .word-card {
+    padding: 14px;
+  }
+
+  .word-letters img {
+    width: 28px;
+    height: 28px;
+  }
+
+  .word-chinese {
+    font-size: 16px;
+  }
+
+  .phrase-list {
+    grid-template-columns: 1fr;
+  }
+
+  .phrase-card {
+    padding: 15px;
+  }
+
+  .phrase-letters img {
+    width: 32px;
+    height: 32px;
+  }
+
+  .modal-content {
+    padding: 25px 20px;
+    margin: 15px;
+  }
+
+  .modal-content img {
+    width: 100px;
+    height: 100px;
+  }
+
+  .syntax-image img {
+    max-width: 100%;
+  }
+}
