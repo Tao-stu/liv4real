@@ -497,7 +497,8 @@
     let currentIndex = 0;
     let score = 0;
     let isReverse = Math.random() > 0.5; // 随机正反方向
-    let answers = []; // 记录每道题的作答结果
+    let answers = []; // 记录每道题的作答结果（true/false）
+    let selectedAnswers = []; // 记录每道题用户选择的答案
 
     // 打乱数组
     function shuffle(array) {
@@ -527,6 +528,7 @@
       // 检查当前题是否已作答
       const alreadyAnswered = answers[currentIndex] !== undefined;
       const correctAnswer = q.answer;
+      const userSelected = selectedAnswers[currentIndex]; // 用户之前选择的答案
 
       // 生成题号导航
       const navItems = questions.map((_, i) => {
@@ -558,7 +560,13 @@
       // 生成选项HTML
       function getOptionBtns(options, hasImg) {
         return options.map(opt => {
-          let classes = 'quiz-option disabled';
+          let classes = 'quiz-option';
+          // 如果已作答，禁用选项
+          if (alreadyAnswered) classes += ' disabled';
+          // 如果已作答且用户选择了这个选项，显示选中状态
+          if (alreadyAnswered && userSelected === opt) {
+            classes += answers[currentIndex] ? ' correct' : ' wrong';
+          }
           let html = '';
 
           if (hasImg) {
@@ -641,49 +649,60 @@
       document.querySelector('.quiz-next').addEventListener('click', nextQuestion);
     }
 
-    // 显示答题结果（用于回看）
+    // 显示答题结果（用于回看已作答的题目）
     function showAnswerResult(correct, gloryImg) {
       const options = document.querySelectorAll('.quiz-option');
       const feedback = document.querySelector('.quiz-feedback');
       const isCorrect = answers[currentIndex];
+      const userSelected = selectedAnswers[currentIndex];
 
       options.forEach(opt => {
         const answer = opt.dataset.answer;
         if (answer === correct) {
           opt.classList.add('correct');
         }
+        // 如果是用户之前选择的答案且错误，显示wrong样式
+        if (answer === userSelected && !isCorrect) {
+          opt.classList.add('wrong');
+        }
       });
 
       if (isCorrect) {
-        feedback.innerHTML = `✓ 回答正确！+10分<br>${gloryImg}`;
+        feedback.innerHTML = `回答正确！+10分<br>${gloryImg}`;
         feedback.className = 'quiz-feedback show correct';
       } else {
-        feedback.innerHTML = `✗ 回答错误，正确答案是：<br>${gloryImg}`;
+        feedback.innerHTML = `回答错误，正确答案是：<br>${gloryImg}`;
         feedback.className = 'quiz-feedback show wrong';
       }
     }
 
     // 检查答案
     function checkAnswer(btn) {
-      // 如果已经作答，直接返回防止重复计分
-      if (btn.classList.contains('disabled')) return;
-
       const options = document.querySelectorAll('.quiz-option');
       const feedback = document.querySelector('.quiz-feedback');
       const correct = questions[currentIndex].answer;
       const correctItem = questions[currentIndex];
       const selected = btn.dataset.answer;
+      const wasAnswered = answers[currentIndex] !== undefined;
+      const wasCorrect = answers[currentIndex] === true;
+      const previousSelected = selectedAnswers[currentIndex]; // 之前选择的答案
 
-      options.forEach(opt => opt.classList.add('disabled'));
+      // 记录当前选择的答案
+      selectedAnswers[currentIndex] = selected;
 
       // 生成荣耀语图片HTML
       const gloryImg = correctItem.letters.map(n => `<img src="img/${n}.png" alt="字母">`).join('');
 
       if (selected === correct) {
         btn.classList.add('correct');
-        feedback.innerHTML = `✓ 回答正确！+10分<br>${gloryImg}`;
+        feedback.innerHTML = `回答正确！+10分<br>${gloryImg}`;
         feedback.className = 'quiz-feedback show correct';
-        score += 10;
+
+        // 如果之前答错了或没答过，现在答对了，需要加分
+        if (!wasCorrect) {
+          if (wasAnswered) score += 10;
+          else score += 10;
+        }
         answers[currentIndex] = true;
         document.querySelector('.quiz-score').textContent = score + ' 分';
       } else {
@@ -691,8 +710,14 @@
         options.forEach(opt => {
           if (opt.dataset.answer === correct) opt.classList.add('correct');
         });
-        feedback.innerHTML = `✗ 回答错误，正确答案是：<br>${gloryImg}`;
+        feedback.innerHTML = `回答错误，正确答案是：<br>${gloryImg}`;
         feedback.className = 'quiz-feedback show wrong';
+
+        // 如果之前答对了，现在答错了，需要扣分
+        if (wasCorrect) {
+          score -= 10;
+          document.querySelector('.quiz-score').textContent = score + ' 分';
+        }
         answers[currentIndex] = false;
       }
 
@@ -781,6 +806,7 @@
       currentIndex = 0;
       score = 0;
       answers = [];
+      selectedAnswers = [];
       renderQuestion();
     }
 
