@@ -1,9 +1,17 @@
+// 音标数据
+const phonetics = [
+  '/uː/', '/ɜː/', '/e/', '/ka/', '/dur/', '/uz/', '/augd/', '/sua/',
+  '/gedz/', '/ma/', '/pa/', '/zɪlu/', '/sui/', '/tra/', '/gui/', '/jæ/',
+  '/ʃeə/', '/dri/', '/ræ/', '/bɔː/', '/ɠu/', '/ɬju↓/', '/ɨːa/', '/uats/'
+];
+
 // 字母数据
 const letters = [];
 for (let i = 1; i <= 24; i++) {
   letters.push({
     num: i,
-    src: `img/${i}.png`
+    src: `img/${i}.png`,
+    phonetic: phonetics[i - 1]
   });
 }
 
@@ -15,7 +23,7 @@ function renderLetterGrid() {
   grid.innerHTML = letters.map(letter => `
     <div class="letter-card" data-num="${letter.num}">
       <img src="${letter.src}" alt="字母 ${letter.num}" loading="lazy">
-      <span class="letter-num">第 ${letter.num} 个字母</span>
+      <span class="letter-num">${letter.phonetic}</span>
     </div>
   `).join('');
 
@@ -37,7 +45,7 @@ function openModal(num) {
   content.innerHTML = `
     <span class="modal-close">&times;</span>
     <img src="${letter.src}" alt="字母 ${num}">
-    <h3>第 ${num} 个字母</h3>
+    <h3>${letter.phonetic}</h3>
     <p>点击字母学习更多内容</p>
   `;
 

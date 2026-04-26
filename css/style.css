@@ -6,7 +6,7 @@
 
 body {
   font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+  background: #fff;
   min-height: 100vh;
   color: #333;
 }
@@ -44,6 +44,7 @@ header .container {
   font-weight: bold;
   color: #fff;
   text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+  text-decoration: none;
 }
 
 .nav-tabs {
@@ -126,7 +127,7 @@ header .container {
 .letter-card .letter-num {
   font-size: 14px;
   color: #666;
-  background: #f0f4ff;
+  background: #fff;
   padding: 4px 12px;
   border-radius: 12px;
   display: inline-block;

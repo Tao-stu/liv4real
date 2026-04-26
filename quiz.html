@@ -8,9 +8,81 @@
   <link rel="stylesheet" href="css/style.css">
   <style>
     .quiz-container {
-      max-width: 600px;
+      max-width: 800px;
       margin: 0 auto;
       padding: 20px 0 40px;
+      display: flex;
+      gap: 20px;
+    }
+
+    .quiz-main {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .quiz-nav {
+      width: 100px;
+      background: #fff;
+      border-radius: 20px;
+      padding: 20px 15px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      height: fit-content;
+      align-self: flex-start;
+      margin-top: 50px;
+    }
+
+    .quiz-nav-title {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .quiz-nav-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+    }
+
+    .quiz-nav-item {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 2px solid #e0e7ff;
+      background: #fff;
+      color: #666;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .quiz-nav-item:hover {
+      border-color: #3b82f6;
+      color: #2563eb;
+    }
+
+    .quiz-nav-item.current {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: #fff;
+    }
+
+    .quiz-nav-item.answered {
+      background: #f0f4ff;
+      border-color: #3b82f6;
+      color: #2563eb;
+    }
+
+    .quiz-nav-item.correct {
+      background: #dcfce7;
+      border-color: #22c55e;
+      color: #16a34a;
+    }
+
+    .quiz-nav-item.wrong {
+      background: #fee2e2;
+      border-color: #ef4444;
+      color: #dc2626;
     }
 
     .quiz-progress {
@@ -76,7 +148,7 @@
       justify-content: center;
       gap: 4px;
       padding: 10px;
-      background: #f0f4ff;
+      background: #fff;
       border: 2px solid #e0e7ff;
       border-radius: 12px;
       cursor: pointer;
@@ -85,7 +157,7 @@
 
     .img-options .quiz-option:hover:not(.disabled) {
       border-color: #3b82f6;
-      background: #e0e7ff;
+      background: #fff;
     }
 
     .img-options .quiz-option img {
@@ -103,7 +175,7 @@
 
     .quiz-option {
       padding: 15px 20px;
-      background: #f0f4ff;
+      background: #fff;
       border: 2px solid #e0e7ff;
       border-radius: 12px;
       font-size: 18px;
@@ -113,18 +185,18 @@
     }
 
     .quiz-option:hover:not(.disabled) {
-      background: #e0e7ff;
+      background: #fff;
       border-color: #3b82f6;
     }
 
     .quiz-option.correct {
-      background: #dcfce7;
+      background: #fff;
       border-color: #22c55e;
       color: #16a34a;
     }
 
     .quiz-option.wrong {
-      background: #fee2e2;
+      background: #fff;
       border-color: #ef4444;
       color: #dc2626;
     }
@@ -167,11 +239,27 @@
       border-radius: 25px;
       font-size: 16px;
       cursor: pointer;
-      display: none;
+      display: inline-block;
     }
 
-    .quiz-next.show {
-      display: inline-block;
+    .quiz-prev {
+      padding: 10px 20px;
+      background: #fff;
+      color: #2563eb;
+      border: 2px solid #2563eb;
+      border-radius: 20px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .quiz-prev:hover {
+      background: #f0f4ff;
+    }
+
+    .quiz-prev:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
 
     /* 结果页 */
@@ -227,6 +315,17 @@
     @media (max-width: 480px) {
       .quiz-container {
         padding: 15px 0 30px;
+        flex-direction: column;
+      }
+
+      .quiz-nav {
+        width: 100%;
+        position: static;
+        order: -1;
+      }
+
+      .quiz-nav-list {
+        grid-template-columns: repeat(5, 1fr);
       }
 
       .quiz-progress {
@@ -337,9 +436,9 @@
   <header>
     <div class="container">
       <div class="nav-wrapper">
-        <div class="logo">荣耀语学习网站</div>
+        <a href="index.html" class="logo">荣耀语学习网站</a>
         <nav class="nav-tabs">
-          <a href="index.html" class="nav-tab">字母</a>
+          <a href="letters.html" class="nav-tab">字母</a>
           <a href="syntax.html" class="nav-tab">语法</a>
           <a href="words.html" class="nav-tab">单词</a>
           <a href="phrases.html" class="nav-tab">常用语</a>
@@ -398,6 +497,7 @@
     let currentIndex = 0;
     let score = 0;
     let isReverse = Math.random() > 0.5; // 随机正反方向
+    let answers = []; // 记录每道题的作答结果
 
     // 打乱数组
     function shuffle(array) {
@@ -424,49 +524,88 @@
       // 50%概率正反方向
       isReverse = Math.random() > 0.5;
 
+      // 生成题号导航
+      const navItems = questions.map((_, i) => {
+        let className = 'quiz-nav-item';
+        if (i === currentIndex) className += ' current';
+        else if (answers[i] !== undefined) {
+          className += ' answered';
+          if (answers[i]) className += ' correct';
+          else className += ' wrong';
+        }
+        return `<button class="${className}" onclick="goToQuestion(${i})">${i + 1}</button>`;
+      }).join('');
+
+      const navHtml = `
+        <div class="quiz-nav">
+          <div class="quiz-nav-title">题号</div>
+          <div class="quiz-nav-list">${navItems}</div>
+        </div>
+      `;
+
+      // 按钮显示逻辑
+      const isFirst = currentIndex === 0;
+      const isLast = currentIndex === questions.length - 1;
+      const prevBtn = isFirst ? '' : `<button class="quiz-prev" onclick="prevQuestion()">← 上一题</button>`;
+      const nextBtn = isLast
+        ? `<button class="quiz-next" style="margin-left: 10px;">提交</button>`
+        : `<button class="quiz-next" style="margin-left: 10px;">下一题 →</button>`;
+
       if (isReverse) {
         // 给荣耀语选中文 - 显示图片，选项是中文
         container.innerHTML = `
-          <div class="quiz-progress">
-            <span>第 ${currentIndex + 1} / ${questions.length} 题</span>
-            <span class="quiz-score">${score} 分</span>
-          </div>
-          <div class="quiz-card">
-            <div class="quiz-type">${q.type} · 看图选中文</div>
-            <div class="quiz-letters">
-              ${q.letters.map(n => `<img src="img/${n}.png" alt="字母">`).join('')}
+          <div class="quiz-main">
+            <div class="quiz-progress">
+              <span>第 ${currentIndex + 1} / ${questions.length} 题</span>
+              <span class="quiz-score">${score} 分</span>
             </div>
-            <div class="quiz-question">?</div>
-            <div class="quiz-options">
-              ${getOptions(q.answer).map(opt => `
-                <button class="quiz-option" data-answer="${opt}">${opt}</button>
-              `).join('')}
+            <div class="quiz-card">
+              <div class="quiz-type">${q.type} · 看图选中文</div>
+              <div class="quiz-letters">
+                ${q.letters.map(n => `<img src="img/${n}.png" alt="字母">`).join('')}
+              </div>
+              <div class="quiz-question">?</div>
+              <div class="quiz-options">
+                ${getOptions(q.answer).map(opt => `
+                  <button class="quiz-option" data-answer="${opt}">${opt}</button>
+                `).join('')}
+              </div>
+              <div class="quiz-feedback"></div>
+              <div style="margin-top: 15px;">
+                ${prevBtn}
+                ${nextBtn}
+              </div>
             </div>
-            <div class="quiz-feedback"></div>
-            <button class="quiz-next">下一题 →</button>
           </div>
+          ${navHtml}
         `;
       } else {
         // 给中文选荣耀语 - 显示中文，选项是图片
         container.innerHTML = `
-          <div class="quiz-progress">
-            <span>第 ${currentIndex + 1} / ${questions.length} 题</span>
-            <span class="quiz-score">${score} 分</span>
-          </div>
-          <div class="quiz-card">
-            <div class="quiz-type">${q.type} · 看中文选图片</div>
-            <div class="quiz-question">${q.answer}</div>
-            <div class="quiz-options img-options">
-              ${getOptions(q.answer).map(opt => {
+          <div class="quiz-main">
+            <div class="quiz-progress">
+              <span>第 ${currentIndex + 1} / ${questions.length} 题</span>
+              <span class="quiz-score">${score} 分</span>
+            </div>
+            <div class="quiz-card">
+              <div class="quiz-type">${q.type} · 看中文选图片</div>
+              <div class="quiz-question">${q.answer}</div>
+              <div class="quiz-options img-options">
+                ${getOptions(q.answer).map(opt => {
           const item = allQuestions.find(a => a.answer === opt);
           return `<button class="quiz-option" data-answer="${opt}">
                   ${item.letters.map(n => `<img src="img/${n}.png" alt="字母">`).join('')}
                 </button>`;
         }).join('')}
+              </div>
+              <div class="quiz-feedback"></div>
+              <div style="margin-top: 15px;">
+                ${prevBtn}
+                ${nextBtn}
+              </div>
             </div>
-            <div class="quiz-feedback"></div>
-            <button class="quiz-next">下一题 →</button>
           </div>
+          ${navHtml}
         `;
       }
 
@@ -480,6 +619,9 @@
 
     // 检查答案
     function checkAnswer(btn) {
+      // 如果已经作答，直接返回防止重复计分
+      if (btn.classList.contains('disabled')) return;
+
       const options = document.querySelectorAll('.quiz-option');
       const feedback = document.querySelector('.quiz-feedback');
       const correct = questions[currentIndex].answer;
@@ -496,6 +638,7 @@
         feedback.innerHTML = `✓ 回答正确！+10分<br>${gloryImg}`;
         feedback.className = 'quiz-feedback show correct';
         score += 10;
+        answers[currentIndex] = true;
         document.querySelector('.quiz-score').textContent = score + ' 分';
       } else {
         btn.classList.add('wrong');
@@ -504,47 +647,84 @@
         });
         feedback.innerHTML = `✗ 回答错误，正确答案是：<br>${gloryImg}`;
         feedback.className = 'quiz-feedback show wrong';
+        answers[currentIndex] = false;
       }
 
       document.querySelector('.quiz-next').classList.add('show');
     }
 
-    // 下一题
-    function nextQuestion() {
-      currentIndex++;
-      if (currentIndex >= questions.length) {
-        showResult();
-      } else {
+    // 上一题
+    function prevQuestion() {
+      if (currentIndex > 0) {
+        currentIndex--;
         renderQuestion();
       }
+    }
+
+    // 跳转到指定题
+    function goToQuestion(index) {
+      currentIndex = index;
+      renderQuestion();
+    }
+
+    // 下一题
+    function nextQuestion() {
+      if (currentIndex < questions.length - 1) {
+        currentIndex++;
+        renderQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    // 提交测验
+    function submitQuiz() {
+      showResult();
     }
 
     // 显示结果
     function showResult() {
       const container = document.getElementById('quizContainer');
-      let emoji, title;
+      let title;
 
       if (score >= 90) {
-        emoji = '🌟';
         title = '太棒了！';
       } else if (score >= 70) {
-        emoji = '👍';
         title = '还不错！';
       } else if (score >= 50) {
-        emoji = '💪';
         title = '继续加油！';
       } else {
-        emoji = '📚';
         title = '多复习一下吧';
       }
 
       container.innerHTML = `
-        <div class="result-card">
-          <div class="result-icon">${emoji}</div>
-          <div class="result-title">${title}</div>
-          <div class="result-score">${score} 分</div>
-          <div class="result-detail">答对 ${score / 10} / ${questions.length} 题</div>
-          <button class="result-restart" onclick="startQuiz()">再测一次</button>
+        <div class="quiz-main">
+          <div class="result-card">
+            <div class="result-title">${title}</div>
+            <div class="result-score">${score} 分</div>
+            <div class="result-detail">答对 ${score / 10} / ${questions.length} 题</div>
+            <button class="result-restart" onclick="startQuiz()">再测一次</button>
+          </div>
+        </div>
+      `;
+    }
+
+    // 显示提示页
+    function showIntro() {
+      const container = document.getElementById('quizContainer');
+      container.innerHTML = `
+        <div class="quiz-main">
+          <div class="quiz-card" style="padding: 40px;">
+            <div style="font-size: 48px; margin-bottom: 20px;">&#9998;</div>
+            <h2 style="color: #2563eb; margin-bottom: 15px; font-size: 24px;">荣耀语水平测试</h2>
+            <p style="color: #666; font-size: 16px; line-height: 1.8; margin-bottom: 10px;">
+              如果你觉得自己的荣耀语学得很好，就来测试一下吧！
+            </p>
+            <p style="color: #888; font-size: 14px; margin-bottom: 30px;">
+              共10题，每题10分，满分100分
+            </p>
+            <button class="quiz-next show" onclick="startQuiz()">开始测试</button>
+          </div>
         </div>
       `;
     }
@@ -554,10 +734,11 @@
       questions = shuffle(allQuestions).slice(0, 10);
       currentIndex = 0;
       score = 0;
+      answers = [];
       renderQuestion();
     }
 
-    startQuiz();
+    showIntro();
   </script>
 </body>
 

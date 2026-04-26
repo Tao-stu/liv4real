@@ -6,6 +6,106 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>荣耀语学习网站</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        .home-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .home-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .home-title {
+            font-size: 32px;
+            color: #2563eb;
+            margin-bottom: 20px;
+        }
+
+        .home-subtitle {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+
+        .home-info {
+            text-align: left;
+            margin: 30px 0;
+        }
+
+        .home-info-item {
+            display: flex;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .home-info-label {
+            font-weight: 600;
+            color: #333;
+            width: 120px;
+            flex-shrink: 0;
+        }
+
+        .home-info-value {
+            color: #666;
+        }
+
+        .home-links {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid #e0e7ff;
+        }
+
+        .home-links a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        .home-links a:hover {
+            text-decoration: underline;
+        }
+
+        .home-start {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 25px;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+
+        .home-start:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
+        }
+
+        @media (max-width: 480px) {
+            .home-card {
+                padding: 30px 20px;
+            }
+
+            .home-title {
+                font-size: 24px;
+            }
+
+            .home-info-item {
+                flex-direction: column;
+            }
+
+            .home-info-label {
+                margin-bottom: 5px;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -14,7 +114,7 @@
             <div class="nav-wrapper">
                 <div class="logo">荣耀语学习网站</div>
                 <nav class="nav-tabs">
-                    <a href="index.html" class="nav-tab active">字母</a>
+                    <a href="letters.html" class="nav-tab">字母</a>
                     <a href="syntax.html" class="nav-tab">语法</a>
                     <a href="words.html" class="nav-tab">单词</a>
                     <a href="phrases.html" class="nav-tab">常用语</a>
@@ -24,11 +124,37 @@
         </div>
     </header>
 
-    <main class="container">
-        <h1 class="page-title">荣耀语字母表</h1>
+    <main class="home-container">
+        <div class="home-card">
+            <h1 class="home-title">欢迎来到荣耀语学习网站</h1>
+            <p class="home-subtitle">
+                学习一种全新的语言，开启你的语言学习之旅
+            </p>
 
-        <div class="letter-grid" id="letterGrid">
-            <!-- 字母卡片将通过JS动态生成 -->
+            <div class="home-info">
+                <div class="home-info-item">
+                    <span class="home-info-label">语言创作者</span>
+                    <span class="home-info-value"><a href="https://www.douyin.com/user/MS4wLjABAAAAWycbgXuiXS5gv_czox0Tb98TFkX-V13a8tCibLMFmlo?from_tab_name=main&vid=7629966286936844643" target="_blank" style="color: #2563eb; text-decoration: none;">liv4real</a></span>
+                </div>
+                <div class="home-info-item">
+                    <span class="home-info-label">第一版字体作者</span>
+                    <span class="home-info-value"><a href="https://www.douyin.com/user/MS4wLjABAAAAWbjosM5Hy3GCNI2AzVl4aOVLH9VUyWuHFNjIQC6UpjU?from_tab_name=main" target="_blank" style="color: #2563eb; text-decoration: none;">孤枫渡秋</a></span>
+                </div>
+                <div class="home-info-item">
+                    <span class="home-info-label">优化版字体来源</span>
+                    <span class="home-info-value"><a href="https://www.douyin.com/user/MS4wLjABAAAA8Gc0I0fT3y_PwiprFJqZIICr-r8KfYWmFctg9PoJgZU?from_tab_name=main" target="_blank" style="color: #2563eb; text-decoration: none;">小泽游戏库</a></span>
+                </div>
+                <div class="home-info-item">
+                    <span class="home-info-label">本站作者</span>
+                    <span class="home-info-value"><a href="https://taoi.me" target="_blank" style="color: #2563eb; text-decoration: none;">小夏不菜吖</a></span>
+                </div>
+            </div>
+
+            <div class="home-links">
+                <p>项目地址：<a href="https://github.com/Tao-stu/liv4real" target="_blank">https://github.com/Tao-stu/liv4real</a></p>
+            </div>
+
+            <a href="letters.html" class="home-start">开始学习</a>
         </div>
     </main>
 
@@ -37,24 +163,6 @@
             <p>荣耀语学习系统 - Written by <a href="https://taoi.me" target="_blank" style="color: #2563eb; text-decoration: none;">小夏不菜吖</a></p>
         </div>
     </footer>
-
-    <!-- 字母详情弹窗 -->
-    <div class="modal" id="letterModal">
-        <div class="modal-content">
-            <!-- 内容通过JS动态生成 -->
-        </div>
-    </div>
-
-    <script src="js/main.js"></script>
-    <script>
-        function showMessage(el) {
-            el.style.opacity = '0.6';
-            setTimeout(() => {
-                alert('该模块正在开发中，敬请期待！');
-                el.style.opacity = '1';
-            }, 100);
-        }
-    </script>
 </body>
 
 </html>
