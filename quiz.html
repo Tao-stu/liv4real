@@ -678,6 +678,9 @@
 
     // 检查答案
     function checkAnswer(btn) {
+      // 如果已作答，禁止修改答案
+      if (answers[currentIndex] !== undefined) return;
+
       const options = document.querySelectorAll('.quiz-option');
       const feedback = document.querySelector('.quiz-feedback');
       const correct = questions[currentIndex].answer;
