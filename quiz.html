@@ -524,6 +524,10 @@
       // 50%概率正反方向
       isReverse = Math.random() > 0.5;
 
+      // 检查当前题是否已作答
+      const alreadyAnswered = answers[currentIndex] !== undefined;
+      const correctAnswer = q.answer;
+
       // 生成题号导航
       const navItems = questions.map((_, i) => {
         let className = 'quiz-nav-item';
@@ -551,8 +555,29 @@
         ? `<button class="quiz-next" style="margin-left: 10px;">提交</button>`
         : `<button class="quiz-next" style="margin-left: 10px;">下一题 →</button>`;
 
+      // 生成选项HTML
+      function getOptionBtns(options, hasImg) {
+        return options.map(opt => {
+          let classes = 'quiz-option disabled';
+          let html = '';
+
+          if (hasImg) {
+            const item = allQuestions.find(a => a.answer === opt);
+            html = item.letters.map(n => `<img src="img/${n}.png" alt="字母">`).join('');
+          } else {
+            html = opt;
+          }
+
+          return `<button class="${classes}" data-answer="${opt}">${html}</button>`;
+        }).join('');
+      }
+
+      // 生成荣耀语图片HTML
+      const gloryImg = q.letters.map(n => `<img src="img/${n}.png" alt="字母">`).join('');
+
       if (isReverse) {
         // 给荣耀语选中文 - 显示图片，选项是中文
+        const options = getOptions(correctAnswer);
         container.innerHTML = `
           <div class="quiz-main">
             <div class="quiz-progress">
@@ -562,13 +587,11 @@
             <div class="quiz-card">
               <div class="quiz-type">${q.type} · 看图选中文</div>
               <div class="quiz-letters">
-                ${q.letters.map(n => `<img src="img/${n}.png" alt="字母">`).join('')}
+                ${gloryImg}
               </div>
               <div class="quiz-question">?</div>
               <div class="quiz-options">
-                ${getOptions(q.answer).map(opt => `
-                  <button class="quiz-option" data-answer="${opt}">${opt}</button>
-                `).join('')}
+                ${getOptionBtns(options, false)}
               </div>
               <div class="quiz-feedback"></div>
               <div style="margin-top: 15px;">
@@ -581,6 +604,7 @@
         `;
       } else {
         // 给中文选荣耀语 - 显示中文，选项是图片
+        const options = getOptions(correctAnswer);
         container.innerHTML = `
           <div class="quiz-main">
             <div class="quiz-progress">
@@ -589,14 +613,9 @@
             </div>
             <div class="quiz-card">
               <div class="quiz-type">${q.type} · 看中文选图片</div>
-              <div class="quiz-question">${q.answer}</div>
+              <div class="quiz-question">${correctAnswer}</div>
               <div class="quiz-options img-options">
-                ${getOptions(q.answer).map(opt => {
-          const item = allQuestions.find(a => a.answer === opt);
-          return `<button class="quiz-option" data-answer="${opt}">
-                  ${item.letters.map(n => `<img src="img/${n}.png" alt="字母">`).join('')}
-                </button>`;
-        }).join('')}
+                ${getOptionBtns(options, true)}
               </div>
               <div class="quiz-feedback"></div>
               <div style="margin-top: 15px;">
@@ -609,12 +628,39 @@
         `;
       }
 
+      // 如果已作答，显示答题结果
+      if (alreadyAnswered) {
+        showAnswerResult(correctAnswer, gloryImg);
+      }
+
       // 绑定按钮事件
       document.querySelectorAll('.quiz-option').forEach(btn => {
         btn.addEventListener('click', () => checkAnswer(btn));
       });
 
       document.querySelector('.quiz-next').addEventListener('click', nextQuestion);
+    }
+
+    // 显示答题结果（用于回看）
+    function showAnswerResult(correct, gloryImg) {
+      const options = document.querySelectorAll('.quiz-option');
+      const feedback = document.querySelector('.quiz-feedback');
+      const isCorrect = answers[currentIndex];
+
+      options.forEach(opt => {
+        const answer = opt.dataset.answer;
+        if (answer === correct) {
+          opt.classList.add('correct');
+        }
+      });
+
+      if (isCorrect) {
+        feedback.innerHTML = `✓ 回答正确！+10分<br>${gloryImg}`;
+        feedback.className = 'quiz-feedback show correct';
+      } else {
+        feedback.innerHTML = `✗ 回答错误，正确答案是：<br>${gloryImg}`;
+        feedback.className = 'quiz-feedback show wrong';
+      }
     }
 
     // 检查答案
